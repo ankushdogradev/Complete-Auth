@@ -1,8 +1,9 @@
 require("dotenv").config({
-  path: "C:/Users/Administrator/Documents/Web Dev/Portfolio/FullStack/AdvanceAuth/.env",
+  path: "C:/Users/Administrator/Documents/Web Dev/Portfolio/FullStack/complete-auth/.env",
 });
 
 const express = require("express");
+const cors = require("cors");
 const connectDB = require("./config/db");
 const errorHandler = require("./error/errorHandler");
 
@@ -11,8 +12,13 @@ connectDB();
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
-//   app.use("/api/", require("./routes/"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 app.use(errorHandler);
 
