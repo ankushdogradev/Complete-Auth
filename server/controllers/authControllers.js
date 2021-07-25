@@ -1,7 +1,12 @@
+const express = require("express");
 const crypto = require("crypto");
 const User = require("../models/userModels");
 const ErrorResponse = require("../error/errorResponse");
 const sendEmail = require("../utils/sendEmail");
+const cookieParser = require("cookie-parser");
+
+const app = express();
+app.use(cookieParser());
 
 //  @description: Register
 //  @route: POST /api/register
@@ -216,6 +221,19 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedJwtToken();
-  res.status(statusCode).json({ success: true, token });
+  const accessToken = user.getSignedJwtAccessToken();
+  const refreshToken = user.getSignedJwtRefreshToken();
+  res
+    .status(statusCode)
+    .cookie("accessToken", accessToken, {
+      expires: new Date(new Date().getTime() + 30 * 1000),
+      sameSite: "strict",
+      httpOnly: true,
+    })
+    .cookie("refreshToken", refreshToken, {
+      expires: new Date(new Date().getTime() + 31557600000),
+      sameSite: "strict",
+      httpOnly: true,
+    })
+    .json({ success: true });
 };

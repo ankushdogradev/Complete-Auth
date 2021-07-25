@@ -56,9 +56,15 @@ UserSchema.methods.matchPasswords = async function (password) {
 };
 
 // Converting user data into JSON WEB TOKEN
-UserSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+UserSchema.methods.getSignedJwtAccessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRE,
+  });
+};
+
+UserSchema.methods.getSignedJwtRefreshToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRE,
   });
 };
 
