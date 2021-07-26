@@ -1,7 +1,12 @@
+import Body from "./components/Body/Body";
 import "./App.scss";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <Body />
+    </>
+  );
 }
 
 export default App;

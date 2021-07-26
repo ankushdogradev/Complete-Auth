@@ -1,0 +1,213 @@
+@import "../../sass/variables";
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: -20px 0 50px;
+
+  height: 100vh;
+
+  h1 {
+    font-weight: bold;
+    margin: 0;
+    color: $accent-color;
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 20px 0 30px;
+    color: $text-color;
+  }
+
+  span {
+    font-size: 12px;
+    color: $text-color;
+  }
+
+  a {
+    color: $accent-color;
+    font-size: 14px;
+    text-decoration: none;
+    margin: 15px 0;
+  }
+
+  .container {
+    background: $second-bg-color;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px $third-bg-color, 0 10px 10px $third-bg-color;
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+    .github {
+      color: white;
+    }
+
+    .facebook {
+      color: #4267b2;
+    }
+    .social-container {
+      margin: 20px 0;
+      .social {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 5px;
+        height: 30px;
+        width: 30px;
+      }
+    }
+
+    button {
+      border-radius: 20px;
+      border: 1px solid $accent-color;
+      background: $accent-color;
+      color: $text-color;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 12px 45px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform 80ms ease-in;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    button:focus {
+      outline: none;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+
+      form {
+        background: $second-bg-color;
+        display: flex;
+        flex-direction: column;
+        padding: 0 50px;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      input {
+        background: $main-bg-color;
+        color: $text-color;
+        border: none;
+        padding: 12px 15px;
+        margin: 8px 0;
+        width: 100%;
+      }
+    }
+
+    .login-container {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+    }
+
+    .register-container {
+      left: 0;
+      width: 50%;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 100;
+      .overlay {
+        background: $accent-color;
+        background: linear-gradient(to right, $accent-color, #647dee) no-repeat
+          0 0 / cover;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: transform 0.6s ease-in-out;
+        h1 {
+          color: black;
+        }
+
+        p {
+          color: black;
+        }
+
+        span {
+          color: $text-color;
+        }
+        .ghost-btn {
+          background: transparent;
+          border-color: $second-bg-color;
+
+          color: $second-bg-color;
+        }
+        .overlay-panel {
+          position: absolute;
+          top: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 0 40px;
+          height: 100%;
+          width: 50%;
+          text-align: center;
+          transform: translateX(0);
+          transition: transform 0.6s ease-in-out;
+        }
+        .overlay-left {
+          transform: translateX(-20%);
+        }
+        .overlay-right {
+          right: 0;
+          transform: translateX(0);
+        }
+      }
+    }
+  }
+
+  // Overlay Animation
+  .container.right-pannel-active {
+    .login-container {
+      transform: translateX(100%);
+    }
+    .register-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+    }
+    .overlay-container {
+      transform: translateX(-100%);
+
+      .overlay {
+        transform: translateX(50%);
+      }
+      .overlay-left {
+        transform: translateX(0);
+      }
+      .overlay-right {
+        transform: translateX(20%);
+      }
+    }
+  }
+}

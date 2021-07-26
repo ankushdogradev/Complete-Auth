@@ -5,6 +5,8 @@ const ErrorResponse = require("../error/errorResponse");
 const sendEmail = require("../utils/sendEmail");
 const cookieParser = require("cookie-parser");
 
+let refreshTokens = [];
+
 const app = express();
 app.use(cookieParser());
 
@@ -126,7 +128,7 @@ exports.login = async (req, res, next) => {
 
     sendToken(user, 200, res);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -180,7 +182,7 @@ exports.forgotPassword = async (req, res, next) => {
       return next(new ErrorResponse("Email could not be sent", 500));
     }
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -220,6 +222,8 @@ exports.resetPassword = async (req, res, next) => {
 const sendToken = (user, statusCode, res) => {
   const accessToken = user.getSignedJwtAccessToken();
   const refreshToken = user.getSignedJwtRefreshToken();
+  refreshTokens.push(refreshToken);
+
   res
     .status(statusCode)
     .cookie("accessToken", accessToken, {
@@ -239,4 +243,55 @@ const sendToken = (user, statusCode, res) => {
       expires: new Date(new Date().getTime() + 31557600000),
     })
     .json({ success: true });
+};
+
+exports.refresh = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return next(
+        new ErrorResponse("Refresh Token not Found, Please login again", 403)
+      );
+    }
+    if (!refreshTokens.includes(refreshToken)) {
+      return next(
+        new ErrorResponse("Refresh Token Blocked!, Please login again", 403)
+      );
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+      if (!err) {
+        const accessToken = user.getSignedJwtAccessToken();
+
+        return res
+          .status(statusCode)
+          .cookie("accessToken", accessToken, {
+            expires: new Date(new Date().getTime() + 30 * 1000),
+            sameSite: "strict",
+            httpOnly: true,
+          }) // Dummie Cookie
+          .cookie("authSession", true, {
+            expires: new Date(new Date().getTime() + 30 * 1000),
+          })
+          .send({ previousSessionExpired: true, success: true });
+      } else {
+        return next(new ErrorResponse("Invalid Refresh token", 403));
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("refreshToken")
+      .clearCookie("accessToken")
+      .clearCookie("authSession")
+      .clearCookie("refreshTokenID")
+      .send("logout");
+  } catch (error) {
+    return next(error);
+  }
 };

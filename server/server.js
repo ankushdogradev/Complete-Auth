@@ -15,10 +15,12 @@ app.use(express.json());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
+    credentials: true,
   })
 );
 
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/private", require("./routes/privateRoutes"));
 
 app.use(errorHandler);
 

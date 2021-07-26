@@ -9,6 +9,8 @@ const {
   forgotPassword,
   resetPassword,
   confirmEmail,
+  refresh,
+  logout,
 } = require("../controllers/authControllers");
 
 router.route("/register").post(register);
@@ -16,5 +18,8 @@ router.route("/confirmation/:confirmToken").put(confirmEmail);
 router.route("/login").post(login);
 router.route("/forgotPassword").post(forgotPassword);
 router.route("/resetPassword/:resetToken").put(resetPassword);
+router.route("/logout").get(logout);
+
+router.route("/refresh").post(refresh);
 
 module.exports = router;
