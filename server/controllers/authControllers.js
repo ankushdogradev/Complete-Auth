@@ -112,8 +112,6 @@ exports.login = async (req, res, next) => {
             data: "A verification mail is send to your email. Please confirm before login",
           });
         } catch (err) {
-          console.log("Log##1", err);
-
           user.verifyEmailToken = undefined;
           user.verifyEmailExpired = undefined;
 
@@ -122,7 +120,6 @@ exports.login = async (req, res, next) => {
           return next(new ErrorResponse("Email could not be sent", 500));
         }
       } catch (error) {
-        console.log("Log##2", error);
         next(error);
       }
     }
@@ -229,11 +226,17 @@ const sendToken = (user, statusCode, res) => {
       expires: new Date(new Date().getTime() + 30 * 1000),
       sameSite: "strict",
       httpOnly: true,
+    }) // Dummie Cookie
+    .cookie("authSession", true, {
+      expires: new Date(new Date().getTime() + 30 * 1000),
     })
     .cookie("refreshToken", refreshToken, {
       expires: new Date(new Date().getTime() + 31557600000),
       sameSite: "strict",
       httpOnly: true,
+    })
+    .cookie("refreshTokenID", true, {
+      expires: new Date(new Date().getTime() + 31557600000),
     })
     .json({ success: true });
 };
