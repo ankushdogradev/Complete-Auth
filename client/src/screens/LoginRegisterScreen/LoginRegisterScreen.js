@@ -47,7 +47,7 @@ const LoginRegisterScreen = ({ history }) => {
     }
 
     try {
-      const { data } = await axios.post(
+      await axios.post(
         "/api/auth/register",
         {
           username: registerUsername,
@@ -56,9 +56,6 @@ const LoginRegisterScreen = ({ history }) => {
         },
         config
       );
-
-      // localStorage.setItem("userInfo", JSON.stringify(data));
-      // localStorage.setItem("token", JSON.stringify(data.token));
 
       history.push("/");
     } catch (error) {
@@ -80,7 +77,7 @@ const LoginRegisterScreen = ({ history }) => {
     };
 
     try {
-      const { data } = await axios.post(
+      await axios.post(
         "/api/auth/login",
         {
           email: loginEmail,
@@ -89,7 +86,6 @@ const LoginRegisterScreen = ({ history }) => {
         config
       );
 
-      // localStorage.setItem("userInfo", JSON.stringify(data));
       history.push("/");
     } catch (error) {
       setLoginError(error.response.data.error);

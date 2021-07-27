@@ -113,13 +113,14 @@ exports.login = async (req, res, next) => {
             success: true,
             data: "A verification mail is send to your email. Please confirm before login",
           });
+          return;
         } catch (err) {
           user.verifyEmailToken = undefined;
           user.verifyEmailExpired = undefined;
 
           await user.save();
-
-          return next(new ErrorResponse("Email could not be sent", 500));
+          console.log("E^: ", err);
+          next(new ErrorResponse("Email could not be sent", 500));
         }
       } catch (error) {
         next(error);
@@ -128,7 +129,7 @@ exports.login = async (req, res, next) => {
 
     sendToken(user, 200, res);
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 
@@ -152,6 +153,8 @@ exports.forgotPassword = async (req, res, next) => {
 
     // Create reset url to email to provided email
     const resetUrl = `http://localhost:3000/resetPassword/${resetToken}`;
+
+    console.log("RESET URL: ", resetUrl);
 
     // HTML Message
     const html = `
@@ -182,7 +185,7 @@ exports.forgotPassword = async (req, res, next) => {
       return next(new ErrorResponse("Email could not be sent", 500));
     }
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
@@ -292,6 +295,6 @@ exports.logout = async (req, res, next) => {
       .clearCookie("refreshTokenID")
       .send("logout");
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };

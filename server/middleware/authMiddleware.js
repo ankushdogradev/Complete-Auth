@@ -1,6 +1,6 @@
 // TODO:
 // * Fix Proxy Error.
-// * Check wether you can use Cors and proxy same time.
+// * Check whether you can use Cors and proxy same time.
 // * Fix accessToken Not Define.
 // * Add Logout functionallity.
 // * Polish Everything.
