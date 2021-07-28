@@ -27,6 +27,7 @@ class Auth {
         })
         .then(function (res) {
           console.log(res.data);
+          // window.location.reload();
         })
         .catch(function (error) {
           console.log(error.response);

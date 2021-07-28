@@ -1,9 +1,10 @@
 const express = require("express");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const User = require("../models/userModels");
 const ErrorResponse = require("../error/errorResponse");
 const sendEmail = require("../utils/sendEmail");
-const cookieParser = require("cookie-parser");
 
 let refreshTokens = [];
 
@@ -119,7 +120,6 @@ exports.login = async (req, res, next) => {
           user.verifyEmailExpired = undefined;
 
           await user.save();
-          console.log("E^: ", err);
           next(new ErrorResponse("Email could not be sent", 500));
         }
       } catch (error) {
@@ -250,37 +250,48 @@ const sendToken = (user, statusCode, res) => {
 
 exports.refresh = async (req, res, next) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const { refreshToken } = req.cookies;
+
     if (!refreshToken) {
       return next(
         new ErrorResponse("Refresh Token not Found, Please login again", 403)
       );
     }
+
     if (!refreshTokens.includes(refreshToken)) {
       return next(
         new ErrorResponse("Refresh Token Blocked!, Please login again", 403)
       );
     }
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
-      if (!err) {
-        const accessToken = user.getSignedJwtAccessToken();
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, payload) => {
+        if (err) {
+          return next(new ErrorResponse("Invalid Refresh token", 403));
+        } else {
+          if (!err) {
+            const user = await User.findById(payload.id);
+            const accessToken = user.getSignedJwtAccessToken();
 
-        return res
-          .status(statusCode)
-          .cookie("accessToken", accessToken, {
-            expires: new Date(new Date().getTime() + 30 * 1000),
-            sameSite: "strict",
-            httpOnly: true,
-          }) // Dummie Cookie
-          .cookie("authSession", true, {
-            expires: new Date(new Date().getTime() + 30 * 1000),
-          })
-          .send({ previousSessionExpired: true, success: true });
-      } else {
-        return next(new ErrorResponse("Invalid Refresh token", 403));
+            return res
+              .cookie("accessToken", accessToken, {
+                expires: new Date(new Date().getTime() + 30 * 1000),
+                sameSite: "strict",
+                httpOnly: true,
+              }) //Dummie Cookie
+              .cookie("authSession", true, {
+                expires: new Date(new Date().getTime() + 30 * 1000),
+              })
+              .send({ previousSessionExpired: true, success: true });
+          }
+        }
+        // console.log("REFRESH PAYLOAD: ", payload.id);
+        // const user = await User.findById(payload.id);
+        // const userID = user.id;
       }
-    });
+    );
   } catch (error) {
     next(error);
   }

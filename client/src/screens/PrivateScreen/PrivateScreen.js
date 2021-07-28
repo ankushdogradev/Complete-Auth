@@ -1,5 +1,5 @@
 import React from "react";
-// import axios from "axios";
+import axios from "axios";
 import "./PrivateScreen.scss";
 
 const PrivateScreen = ({ history }) => {
@@ -36,6 +36,18 @@ const PrivateScreen = ({ history }) => {
 
   //   fetchPrivateData();
   // }, [history]);
+  const logout = () => {
+    axios
+      .get("/api/auth/logout")
+      .then((res) => {
+        console.log(res.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error.response);
+      });
+  };
+
   return (
     <>
       {/* error ? <span className="error-message">{error}</span> :{" "} */}
@@ -44,6 +56,7 @@ const PrivateScreen = ({ history }) => {
         {/* <button onClick={logoutHandler}>Logout</button> */}
       </>
       <h1>Katy </h1>
+      <button onClick={logout}>Logout</button>
     </>
   );
 };

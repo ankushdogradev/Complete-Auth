@@ -85,7 +85,6 @@ const LoginRegisterScreen = ({ history }) => {
         },
         config
       );
-
       history.push("/");
     } catch (error) {
       setLoginError(error.response.data.error);

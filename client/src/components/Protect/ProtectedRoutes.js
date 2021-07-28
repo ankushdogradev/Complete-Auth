@@ -2,8 +2,7 @@ import { Route, Redirect } from "react-router-dom";
 import Auth from "./Auth";
 
 const ProtectedRoutes = ({ component: Component, ...rest }) => {
-  // Boolean isAuthenticated = ;
-  console.log("📙", Auth.isAuthenticated());
+  console.log("🔐", Auth.isAuthenticated());
 
   return (
     <Route

@@ -5,15 +5,17 @@
 // * Add Logout functionallity.
 // * Polish Everything.
 // * What is cookie-parser. And should you use It.
-
+const express = require("express");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const User = require("../models/userModels");
 const ErrorResponse = require("../error/errorResponse");
 
+const app = express();
+app.use(cookieParser());
+
 exports.protect = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
-  console.log("🍪", accessToken);
   try {
     const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
     const user = await User.findById(decoded.id);
